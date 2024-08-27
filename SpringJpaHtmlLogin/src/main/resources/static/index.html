@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+
+<div id = "name"></div>
+<a href="/login.html">Login</a>
+<button id="btnLogout">Logout</button>
+<script>
+    window.onload = function(){
+
+        //저장된 로그인 sessionStroage를 확인
+
+        // #1 개별 항목을 sessionStroage관리
+        // let name = sessionStorage.getItem("name");
+        // let email = sessionStorage.getItem("email");
+        //
+        // if(name != null){
+        //     document.querySelector("#name").innerText = name + "님 환영합니다.";
+        // }else{
+        //     document.querySelector("#name").innerText = "로그인이 필요합니다.";
+        // }
+
+        // #2 userDto 객체를 json 문자열로 변환해서 sessionStorage에 저장하고 필요할 때 다시 객체로 변환해서 사용
+        let userDtoJson = sessionStorage.getItem("userDto");
+        if(userDtoJson != null){
+            let userDto = JSON.parse(userDtoJson);
+            document.querySelector("#name").innerText = userDto.name + "님 환영합니다.";
+        }else{
+            document.querySelector("#name").innerText = "로그인이 필요합니다.";
+        }
+
+        document.querySelector("#btnLogout").onclick = logout;
+    }
+
+
+    async function logout() {
+
+        // url
+        let url = "/users/logout";
+
+        let response = await fetch(url);
+        let data = await response.json()
+
+        if (data.result == "success") {
+            alert("로그아웃 성공");
+            sessionStorage.removeItem("name");
+            sessionStorage.removeItem("email");
+            sessionStorage.removeItem("userDto");
+            document.querySelector("#name").innerText = "로그인이 필요합니다.";
+        } else if (data.result == "fail") {
+            alert("로그아웃 실패");
+        }
+    }
+</script>
+</body>
+</html>
