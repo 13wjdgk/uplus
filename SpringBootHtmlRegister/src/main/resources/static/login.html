@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+</head>
+<body>
+    <h1>로그인</h1>
+    <div>
+        email : <input type="text" id="email" name="email" value="user3@mycom.com">
+    </div>
+    <div>
+        password : <input type="password" id="password" name="password" value="password3">
+    </div>
+    <button id="btnLogin">로그인</button>
+
+    <script>
+        window.onload = function(){
+            document.querySelector("#btnLogin").onclick = login;
+        }
+
+
+
+        async function login(){
+            // parameter, value
+            let email = document.querySelector("#email").value;
+            let password = document.querySelector("#password").value;
+
+            console.log(email, password);
+
+            let urlParams = new URLSearchParams({
+                email: email,
+                password: password
+            });
+
+            // url
+            let url = "/users/login";
+
+            // post, parameter
+            let fetchOptions = {
+                method: "POST",
+                body:urlParams
+            }
+
+            let response = await fetch(url, fetchOptions);
+            let data = await response.json()
+
+            if(data.result == "success"){
+                console.log(data.userDto);
+                // #1 개별 항목을 sessionStroage관리
+                sessionStorage.setItem("name", data.userDto.name);
+                sessionStorage.setItem("email", data.userDto.email);
+                // #2 userDto 객체를 json 문자열로 변환해서 sessionStorage에 저장하고 필요할 때 다시 객체로 변환해서 사용
+                let userDtoJson = JSON.stringify(data.userDto);
+                sessionStorage.setItem("userDto", userDtoJson);
+                location.href = "/index.html";
+            }else if (data.result == "fail"){
+                alert("로그인 실패");
+            }
+
+        }
+
+    </script>
+</body>
+</html>

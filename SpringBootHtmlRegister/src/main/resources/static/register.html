@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+</head>
+<body>
+<h1>Register</h1>
+<div>
+    name : <input type="text" id="name" name="name" value="user3">
+</div>
+<div>
+    email : <input type="text" id="email" name="email" value="user3@mycom.com">
+</div>
+<div>
+    password : <input type="password" id="password" name="password" value="password3">
+</div>
+<button id="btnRegister">로그인</button>
+
+<script>
+    window.onload = function(){
+        document.querySelector("#btnRegister").onclick = register;
+    }
+
+
+
+    async function register(){
+        // parameter, value
+        let name = document.querySelector("#name").value;
+        let email = document.querySelector("#email").value;
+        let password = document.querySelector("#password").value;
+
+        console.log(name,email, password);
+
+        let urlParams = new URLSearchParams({
+            name: name,
+            email: email,
+            password: password
+        });
+
+        // url
+        let url = "/users/register";
+
+        // post, parameter
+        let fetchOptions = {
+            method: "POST",
+            body:urlParams
+        }
+
+        let response = await fetch(url, fetchOptions);
+        let data = await response.json()
+
+        if(data.result == "success"){
+            console.log(data.userDto);
+            alert("회원가입 성공");
+        }else if (data.result == "fail"){
+            alert("회원가입 실패");
+        }
+
+    }
+
+</script>
+</body>
+</html>

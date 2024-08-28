@@ -1,0 +1,114 @@
+package com.example.springboothtmluseraddress.user.service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.example.springboothtmluseraddress.user.dto.UserAddressDto;
+import com.example.springboothtmluseraddress.user.dto.UserDto;
+import com.example.springboothtmluseraddress.user.dto.UserResultDto;
+import com.example.springboothtmluseraddress.user.entity.User;
+import com.example.springboothtmluseraddress.user.entity.UserAddress;
+import com.example.springboothtmluseraddress.user.entity.UserRole;
+import com.example.springboothtmluseraddress.user.repository.UserAddressRepository;
+import com.example.springboothtmluseraddress.user.repository.UserRepository;
+import com.example.springboothtmluseraddress.user.repository.UserRoleRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService{
+	private final UserRepository userRepository;
+	private final UserRoleRepository userRoleRepository;
+	private final UserAddressRepository userAddressRepository;
+	@Override
+	public UserResultDto login(String email, String password) {
+		UserResultDto userResultDto = new UserResultDto();
+		User user = userRepository.findByEmail(email);
+		if(user != null && user.getPassword().equals(password)) {
+			userResultDto.setResult("success");
+			UserDto userDto = new UserDto();
+			userDto.setId(user.getId());
+			userDto.setName(user.getName());
+			userDto.setEmail(user.getEmail());
+			userDto.setPassword(user.getPassword());
+			Map<Integer,String> userRoles = userDto.getRoles();
+			for(UserRole userRole : user.getRoles()) {
+				userRoles.put((int)userRole.getId(), userRole.getName());
+			}
+			userResultDto.setUserDto(userDto);
+			return userResultDto;
+		}
+		userResultDto.setResult("fail");
+		return userResultDto;
+	}
+
+	@Override
+	public UserResultDto insertUser(User user) {
+		UserResultDto userResultDto = new UserResultDto();
+
+		try{
+			UserRole userRole = userRoleRepository.findByName("role_customer");
+			user.getRoles().add(userRole);
+			userRepository.save(user);
+			userResultDto.setResult("success");
+
+		}catch (Exception e) {
+			userResultDto.setResult("fail");
+		}
+
+
+		return userResultDto;
+	}
+
+	@Override
+	public UserResultDto detailUser(long id) {
+		UserResultDto userResultDto = new UserResultDto();
+		Optional<User> user = userRepository.findById(id);
+		user.ifPresentOrElse(u ->{
+			UserDto userDto = new UserDto();
+			userDto.setId(u.getId());
+			userDto.setName(u.getName());
+			userDto.setEmail(u.getEmail());
+			userDto.setPassword(u.getPassword());
+			userResultDto.setResult("success");
+			userResultDto.setUserDto(userDto);
+		}, () -> {
+			userResultDto.setResult("fail");
+		});
+
+		return userResultDto;
+	}
+
+	@Override
+	public UserResultDto listUserAddress(long id) {
+		UserResultDto userResultDto = new UserResultDto();
+		//List<UserAddress> userAddresses = userAddressRepository.findByUserId(id);
+		List<UserAddress> userAddresses = userAddressRepository.findAll();
+
+		System.out.println("size"+userAddresses.size());
+		List<UserAddressDto> addresses = new ArrayList<>();
+		userAddresses.forEach(ua -> {
+			UserAddressDto userAddressDto = new UserAddressDto();
+			userAddressDto.setId(ua.getId());
+			userAddressDto.setAddr1(ua.getAddr1());
+			userAddressDto.setAddr2(ua.getAddr2());
+			userAddressDto.setZipCode(ua.getZipCode());
+			addresses.add(userAddressDto);
+
+
+		});
+
+		UserDto userDto = new UserDto();
+		userDto.setId(id);
+		userDto.setAddresses(addresses);
+		userResultDto.setUserDto(userDto);
+		userResultDto.setResult("success");
+
+		return userResultDto;
+	}
+}
