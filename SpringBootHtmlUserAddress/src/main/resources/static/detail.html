@@ -26,10 +26,23 @@
     </tbody>
 </table>
 
+
+<button id="btnAddAddress">주소 추가</button>
+<div>
+    zipCode : <input type="text" name="zipCode" id="zipCode">
+</div>
+<div>
+    addr1 : <input type="text" name="addr1" id="addr1">
+</div>
+<div>
+    addr2 : <input type="text" name="addr2" id="addr2">
+</div>
+
 <script>
     window.onload = function(){
         detail();
         document.querySelector("#btnListAddress").onclick = listAddress;
+        document.querySelector("#btnAddAddress").onclick = addAddress;
     }
 
     async function detail(){
@@ -40,7 +53,6 @@
         let data = await response.json()
 
         if( data.result == "success" ) {
-            // 회원가입 성공일 경우
             console.log(data.userDto);
             let { userDto } = data; // destruction (구조분해 할당)
             document.querySelector("#name").value = userDto.name;
@@ -70,6 +82,47 @@
             document.querySelector("#addressTbody").innerHTML = addressHtml;
         }else if( data.result == "fail" ){
             alert("주소목록 조회 과정에서 오류가 발생했습니다.")
+        }
+    }
+    async function addAddress(){
+        // parameter, value
+        let zipCode = document.querySelector("#zipCode").value;
+        let addr1 = document.querySelector("#addr1").value;
+        let addr2 = document.querySelector("#addr2").value;
+
+        console.log(zipCode,addr1, addr2);
+
+        let urlParams = new URLSearchParams({
+            zipCode: zipCode,
+            addr1: addr1,
+            addr2: addr2
+        });
+
+        // url
+        let url = "/users/addAddress";
+
+        // post, parameter
+        let fetchOptions = {
+            method: "POST",
+            body:urlParams
+        }
+
+        let response = await fetch(url, fetchOptions);
+        let data = await response.json()
+
+        if(data.result == "success"){
+            console.log(data.userDto);
+            let { userDto } = data; // destruction (구조분해 할당)
+
+            let addressHtml = ``;
+            userDto.addresses.forEach( address => {
+                addressHtml += `<tr><td>${address.zipCode}</td><td>${address.addr1}</td><td>${address.addr2}</td></tr>`
+            } );
+
+            document.querySelector("#addressTbody").innerHTML = addressHtml;
+            alert("주소 추가 성공");
+        }else if (data.result == "fail"){
+            alert("주소 추가 과정에서 오류가 발생했습니다.")
         }
     }
 </script>

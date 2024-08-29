@@ -26,9 +26,14 @@ public class UserAddress {
 	private String zipCode;
 	private String addr1;
 	private String addr2;
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	@ToString.Exclude
-	private User user;
+//	@ManyToOne(fetch = FetchType.LAZY)
+//	@JoinColumn(name = "user_id")
+//	@ToString.Exclude
+//	private User user;
+
+
+	// User와 연관관계가 없을 때
+	@Column(name = "user_id")
+	private Long userId;
 
 }

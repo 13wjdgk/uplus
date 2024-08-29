@@ -1,5 +1,6 @@
 package com.example.springboothtmluseraddress.user.controller.userController;
 
+import com.example.springboothtmluseraddress.user.entity.UserAddress;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -61,7 +62,13 @@ public class UserController {
 	@GetMapping("/listUserAddress")
 	public UserResultDto listUserAddress(HttpSession session) {
 		Long id = ((UserDto) session.getAttribute("userDto")).getId();
-		System.out.println("id: " + id);
 		return userService.listUserAddress(id);
+	}
+
+	//로그인이 되어 있는 상태, (세션에 userDto가 있는 상태)에서만 사용 가능
+	@PostMapping("/addAddress")
+	public UserResultDto listUserAddress(UserAddress userAddress, HttpSession session) {
+		Long id = ((UserDto) session.getAttribute("userDto")).getId();
+		return userService.insertUserAddress(userAddress,id);
 	}
 }

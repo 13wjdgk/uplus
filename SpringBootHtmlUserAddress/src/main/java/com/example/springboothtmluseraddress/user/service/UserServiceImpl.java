@@ -111,4 +111,46 @@ public class UserServiceImpl implements UserService{
 
 		return userResultDto;
 	}
+
+	//UserAddress를 등록할 때 JPA의 연관관계를 이용해서 등록
+	//만약 User와 연관관계가 없다면 UserAddress를 등록할 때 User의 id를 받아서 User를 찾아서 연관관계를 설정해야 한다.
+	@Override
+	public UserResultDto insertUserAddress(UserAddress userAddress,long id) {
+		UserResultDto userResultDto = new UserResultDto();
+		userAddress.setUserId(id);
+		userAddressRepository.save(userAddress);
+		userResultDto.setResult("success");
+		return userResultDto;
+		//#3
+//		Optional<User> user = userRepository.findById(id);
+//		user.ifPresentOrElse(u ->{
+//			userAddress.setUser(u);
+//			try{
+//				userAddressRepository.save(userAddress);
+//				List<UserAddress> userAddresses = userAddressRepository.findByUserId(id);
+//				UserDto userDto = new UserDto();
+//				List<UserAddressDto> addresses = userDto.getAddresses();
+//				userAddresses.forEach(ua -> {
+//					UserAddressDto userAddressDto = new UserAddressDto();
+//					userAddressDto.setId(ua.getId());
+//					userAddressDto.setAddr1(ua.getAddr1());
+//					userAddressDto.setAddr2(ua.getAddr2());
+//					userAddressDto.setZipCode(ua.getZipCode());
+//					addresses.add(userAddressDto);
+//
+//
+//				});
+//				userDto.setId(id);
+//				userResultDto.setUserDto(userDto);
+//				userResultDto.setResult("success");
+//
+//			}catch (Exception e) {
+//				userResultDto.setResult("fail");
+//			}
+//
+//		}, () -> {
+//			userResultDto.setResult("fail");
+//		});
+//		return userResultDto;
+	}
 }
