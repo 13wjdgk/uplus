@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Details</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+    .user-info {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .user-info h2 {
+      margin-top: 0;
+    }
+    .user-info div {
+      margin-bottom: 10px;
+    }
+    .label {
+      font-weight: bold;
+    }
+    .edit-btn {
+      display: inline-block;
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      text-align: center;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    .edit-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>User Details</h1>
+  <div id="user-details" class="user-info">
+    <!-- User information will be displayed here -->
+  </div>
+  <a href="userEdit.html" class="edit-btn">Edit User</a> <!-- Edit button -->
+  <a href="addressList.html" class="edit-btn">Address List </a> <!-- Edit button -->
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    fetchUserDetails();
+  });
+
+  function fetchUserDetails() {
+    fetch('/users/detail')
+            .then(response => response.json())
+            .then(data => {
+              if (data.result === "success") {
+                displayUserDetails(data.data);
+              } else {
+                alert("Failed to retrieve user details.");
+              }
+            })
+            .catch(error => console.error("Error fetching user details:", error));
+  }
+
+  function displayUserDetails(user) {
+    const userDetailsDiv = document.getElementById("user-details");
+    userDetailsDiv.innerHTML = `
+      <h2>${user.name}</h2>
+      <div><span class="label">Email:</span> ${user.email}</div>
+      <div><span class="label">Phone:</span> ${user.phone}</div>
+      <div><span class="label">Gender:</span> ${user.gender === 'M' ? 'Male' : 'Female'}</div>
+    `;
+  }
+</script>
+</body>
+</html>

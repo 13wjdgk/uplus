@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원 목록</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+<h1>회원 목록</h1>
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>이름</th>
+    <th>이메일</th>
+    <th>전화번호</th>
+    <th>성별</th>
+  </tr>
+  </thead>
+  <tbody id="customer-list">
+  <!-- 회원 목록이 여기에 표시됩니다. -->
+  </tbody>
+</table>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    fetchCustomerList();
+  });
+
+  async function fetchCustomerList() {
+    try {
+      let url = "/users/customerList";
+
+      let response = await fetch(url);
+      let data = await response.json();
+      console.log(data);
+      if (data.result === "success") {
+        populateCustomerList(data.data);
+      } else {
+        alert("회원 목록을 가져오는 데 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("회원 목록 가져오기 오류:", error);
+    }
+  }
+
+  function populateCustomerList(customers) {
+    const customerListElement = document.getElementById("customer-list");
+
+    customers.forEach(customer => {
+      let row = document.createElement("tr");
+
+      let idCell = document.createElement("td");
+      idCell.textContent = customer.id;
+      row.appendChild(idCell);
+
+      let nameCell = document.createElement("td");
+      nameCell.textContent = customer.name;
+      row.appendChild(nameCell);
+
+      let emailCell = document.createElement("td");
+      emailCell.textContent = customer.email;
+      row.appendChild(emailCell);
+
+      let phoneCell = document.createElement("td");
+      phoneCell.textContent = customer.phone;
+      row.appendChild(phoneCell);
+
+      let genderCell = document.createElement("td");
+      genderCell.textContent = customer.gender;
+      row.appendChild(genderCell);
+
+      customerListElement.appendChild(row);
+    });
+  }
+</script>
+</body>
+</html>
