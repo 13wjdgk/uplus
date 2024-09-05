@@ -11,9 +11,6 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "student")
-// @Getter
-// @Setter
-// @ToString
 @Data // @Getter, @Setter, @ToString, @EqualsAndHashCode, @RequiredArgsConstructor를 한번에 설정
 public class Student {
 	@Id
