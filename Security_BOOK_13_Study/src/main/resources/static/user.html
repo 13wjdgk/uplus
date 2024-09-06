@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="icon" href="data:;base64,=">
+</head>
+<body>
+<h1>Student.html</h1>
+<a href="/login.html">User</a>
+
+<script>
+    window.onload = getUser;
+
+    async function getUser() {
+        let authToken = sessionStorage.getItem("authToken");
+        // authToken 이 없을 경우 validation 이 필요할 수 있다.
+
+        let url = "/users/hello";
+        // post, parameter
+        let fetchOptions = {
+            method: "GET",
+            headers: {
+                "X-AUTH-TOKEN": authToken
+            }
+        }
+        console.log(fetchOptions);
+
+        let response = await fetch(url, fetchOptions);
+
+        console.log(response);
+    }
+
+</script>
+</body>
+</html>
